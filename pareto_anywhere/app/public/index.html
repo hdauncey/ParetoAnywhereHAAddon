@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pareto Anywhere</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Pareto Anywhere</h1>
+    <span id="statusPill" class="pill">…</span>
+    <nav id="tabs" role="tablist">
+      <button data-tab="mappings" class="active" role="tab">EnOcean devices</button>
+      <button data-tab="discovered" role="tab">Discovered</button>
+      <button data-tab="raw" role="tab">Raw JSON</button>
+      <button data-tab="backups" role="tab">Backups</button>
+      <button data-tab="status" role="tab">Status &amp; logs</button>
+      <button data-tab="pareto" role="tab">Pareto UI</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Mappings -->
+    <section id="tab-mappings" class="tab active">
+      <p class="hint">
+        Map each EnOcean device ID (32-bit EURID, e.g. <code>05174fc4</code>) to its EnOcean Equipment Profile
+        (EEP, e.g. <code>A5-04-03</code>) so Pareto Anywhere can decode its payload. Pareto reads this file at
+        startup, so changes take effect after a restart.
+      </p>
+      <div class="toolbar">
+        <button id="addRow">+ Add device</button>
+        <button id="importBtn" class="secondary">Import…</button>
+        <a id="exportLink" class="button secondary" href="api/enocean/export">Export</a>
+        <input id="importFile" type="file" accept="application/json,.json" hidden>
+        <span class="spacer"></span>
+        <span id="dirty" class="dirty" hidden>Unsaved changes</span>
+        <button id="saveBtn">Save</button>
+        <button id="saveRestartBtn" class="primary">Save &amp; restart Pareto</button>
+      </div>
+      <div id="mapMessage" class="message" hidden></div>
+      <table id="mapTable">
+        <thead><tr><th>Device ID</th><th>EEP type</th><th>Label (optional)</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="mapEmpty" class="empty" hidden>No devices mapped yet. Add one, or pick from the Discovered tab.</p>
+      <datalist id="eepList">
+        <option value="A5-02-05"></option><option value="A5-04-01"></option><option value="A5-04-03"></option>
+        <option value="A5-06-01"></option><option value="A5-07-01"></option><option value="A5-08-01"></option>
+        <option value="A5-09-04"></option><option value="A5-10-03"></option><option value="A5-12-01"></option>
+        <option value="D2-14-41"></option><option value="D5-00-01"></option><option value="F6-02-01"></option>
+        <option value="F6-02-02"></option>
+      </datalist>
+      <p class="hint small">
+        Suggestions are common profiles only; any <code>XX-XX-XX</code> value is accepted, but Pareto can only decode the
+        EEPs it supports (see the
+        <a href="https://www.reelyactive.com/pareto/anywhere/devices/enocean-alliance/" target="_blank" rel="noopener">supported EEP list</a>).
+        Labels are stored by the add-on only and never written to <code>enocean.json</code>.
+      </p>
+    </section>
+
+    <!-- Discovered -->
+    <section id="tab-discovered" class="tab">
+      <p class="hint">EnOcean devices (ID type <code>/7</code>) currently known to Pareto Anywhere via your Aruba APs.</p>
+      <div class="toolbar"><button id="refreshDiscovered" class="secondary">Refresh</button></div>
+      <div id="discMessage" class="message" hidden></div>
+      <table id="discTable">
+        <thead><tr><th>Device ID</th><th>Status</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="discEmpty" class="empty" hidden>No EnOcean devices seen yet.</p>
+    </section>
+
+    <!-- Raw -->
+    <section id="tab-raw" class="tab">
+      <p class="hint">Edit <code>enocean.json</code> directly. It is validated before saving; IDs and EEPs are normalised.</p>
+      <div class="toolbar">
+        <button id="formatRaw" class="secondary">Format</button>
+        <button id="reloadRaw" class="secondary">Reload</button>
+        <span class="spacer"></span>
+        <button id="saveRaw">Save</button>
+        <button id="saveRawRestart" class="primary">Save &amp; restart Pareto</button>
+      </div>
+      <div id="rawMessage" class="message" hidden></div>
+      <textarea id="rawText" spellcheck="false" rows="22"></textarea>
+    </section>
+
+    <!-- Backups -->
+    <section id="tab-backups" class="tab">
+      <p class="hint">A backup of the previous file is kept automatically on every save (newest 20).</p>
+      <div id="backupMessage" class="message" hidden></div>
+      <table id="backupTable">
+        <thead><tr><th>Backup</th><th>Size</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="backupEmpty" class="empty" hidden>No backups yet.</p>
+    </section>
+
+    <!-- Status -->
+    <section id="tab-status" class="tab">
+      <div class="toolbar">
+        <button id="restartBtn" class="primary">Restart Pareto Anywhere</button>
+      </div>
+      <dl id="statusList"></dl>
+      <h2>Aruba AP target URLs</h2>
+      <p class="hint">Use your Home Assistant host's LAN IP or DNS name in place of <code>&lt;HA-HOST&gt;</code>.</p>
+      <pre id="arubaUrls"></pre>
+      <h2>Log</h2>
+      <pre id="logView" class="log"></pre>
+    </section>
+
+    <!-- Pareto UI -->
+    <section id="tab-pareto" class="tab">
+      <p class="hint small">
+        Pareto Anywhere's own web apps, proxied through ingress. This is best effort: if a page looks broken, open it
+        directly on port <span id="directPort">3001</span> of your Home Assistant host.
+      </p>
+      <iframe id="paretoFrame" title="Pareto Anywhere"></iframe>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+name: Pareto Anywhere
+version: "1.0.0"
+slug: pareto_anywhere
+description: reelyActive Pareto Anywhere for Aruba AP BLE and EnOcean ingest, with an EnOcean EEP mapping manager
+url: https://github.com/reelyactive/pareto-anywhere
+arch:
+  - amd64
+  - aarch64
+startup: services
+boot: auto
+init: false
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:access-point-network
+panel_title: Pareto Anywhere
+ports:
+  3001/tcp: 3001
+  50001/udp: 50001
+ports_description:
+  3001/tcp: Pareto Anywhere HTTP(S) and WebSocket (Aruba APs connect to /aruba/aos8 or /aruba/aos10)
+  50001/udp: Raddec UDP input (optional, for external barnowl forwarders)
+map:
+  - addon_config:rw
+  - ssl:ro
+options:
+  tls: false
+  certfile: fullchain.pem
+  keyfile: privkey.pem
+schema:
+  tls: bool
+  certfile: str
+  keyfile: str

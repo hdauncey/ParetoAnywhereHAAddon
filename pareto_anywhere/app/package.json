@@ -1,0 +1,14 @@
+{
+  "name": "pareto-anywhere-addon-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Supervisor and EnOcean mapping manager for the Pareto Anywhere Home Assistant add-on",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy": "^1.18.1"
+  }
+}

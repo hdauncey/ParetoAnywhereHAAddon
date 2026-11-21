@@ -1,0 +1,15 @@
+configuration:
+  tls:
+    name: Enable TLS (wss://)
+    description: >-
+      Serve Pareto Anywhere over HTTPS/WSS using the certificate below. Required for
+      AOS 10 APs, which only support secure WebSockets. AOS 8 works with plain ws://.
+  certfile:
+    name: Certificate file
+    description: Certificate (full chain) file name inside the Home Assistant /ssl folder.
+  keyfile:
+    name: Private key file
+    description: Private key file name inside the Home Assistant /ssl folder.
+network:
+  3001/tcp: Pareto Anywhere HTTP(S) / WebSocket (Aruba APs connect here)
+  50001/udp: Raddec UDP input (optional)
